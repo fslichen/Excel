@@ -1,8 +1,10 @@
 package evolution;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
@@ -20,11 +22,25 @@ import evolution.pojo.AnyPojo;
 
 public class Excel {
 	@Test
-	public void run() {
+	public void run() throws IOException {
 		Workbook workbook = new XSSFWorkbook();
 		List<AnyPojo> list = Arrays.asList(new AnyPojo("Chen", "M", 27), new AnyPojo("Ling", "F", 26), new AnyPojo("Peter", "M", 25));
 		writeList2Sheet(workbook, "anySheet", list, AnyPojo.class);
 		save(workbook, "/Users/chenli/Desktop/anyFile.xlsx");
+		convert2Csv(workbook.getSheet("anySheet"), "/Users/chenli/Desktop/anyFile.csv");
+	}
+	
+	public <T> void convert2Csv(Sheet sheet, String filePath) throws IOException {
+		BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
+		for (int i = sheet.getFirstRowNum(); i <= sheet.getLastRowNum(); i++) {
+			StringBuilder rowString = new StringBuilder();
+			Row row = sheet.getRow(i);
+			for (int j = row.getFirstCellNum(); j < row.getLastCellNum(); j++) {
+				rowString.append(row.getCell(j) + ",");
+			}
+			bufferedWriter.write(rowString.substring(0, rowString.length() - 1) + "\n");
+		}
+		bufferedWriter.close();
 	}
 	
 	public <T> void writeList2Sheet(Workbook workbook, String sheetName, List<T> ts, Class<T> clazz) {
