@@ -22,13 +22,15 @@ public class Excel {
 	@Test
 	public void run() {
 		Workbook workbook = new XSSFWorkbook();
-		List<AnyPojo> list = Arrays.asList(new AnyPojo("Chen", "M"), new AnyPojo("Ling", "F"));
+		List<AnyPojo> list = Arrays.asList(new AnyPojo("Chen", "M", 27), new AnyPojo("Ling", "F", 26), new AnyPojo("Peter", "M", 25));
 		writeList2Sheet(workbook, "anySheet", list, AnyPojo.class);
 		save(workbook, "/Users/chenli/Desktop/anyFile.xlsx");
 	}
 	
 	public <T> void writeList2Sheet(Workbook workbook, String sheetName, List<T> ts, Class<T> clazz) {
+		// Sheet
 		Sheet sheet = workbook.createSheet(sheetName);
+		// Column Names
 		Field[] fields = clazz.getDeclaredFields();
 		int i = 0;
 		int j = 0;
@@ -40,6 +42,13 @@ public class Excel {
 			cell.setCellType(CellType.STRING);
 			cell.setCellValue(alias != null ? alias.value() : field.getName());
 		}
+		// Data
+		List<Class<?>> numericClasses = Arrays.asList(byte.class, Byte.class,
+				short.class, Short.class,
+				int.class, Integer.class,
+				long.class, Long.class,
+				float.class, Float.class,
+				double.class, Double.class);
 		for (T t : ts) {
 			j = 0;
 			row = sheet.createRow(i++);
@@ -51,7 +60,7 @@ public class Excel {
 					if (fieldType == String.class) {
 						cell.setCellType(CellType.STRING);
 						cell.setCellValue((String) fieldValue);
-					} else if (Number.class.isAssignableFrom(fieldType)) {
+					} else if (numericClasses.contains(fieldType)) {
 						cell.setCellType(CellType.NUMERIC);
 						cell.setCellValue(new Double(fieldValue + ""));
 					}

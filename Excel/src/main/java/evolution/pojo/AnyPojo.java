@@ -7,7 +7,17 @@ public class AnyPojo {
 	private String name;
 	@Alias("性别")
 	private String gender;
+	@Alias("年龄")
+	private int age;
 	
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -28,13 +38,14 @@ public class AnyPojo {
 
 	}
 
-	public AnyPojo(String name, String gender) {
+	public AnyPojo(String name, String gender, int age) {
 		this.name = name;
 		this.gender = gender;
+		this.age = age;
 	}
 
 	@Override
 	public String toString() {
-		return "AnyPojo [name=" + name + ", gender=" + gender + "]";
+		return "AnyPojo [name=" + name + ", gender=" + gender + ", age=" + age + "]";
 	}
 }
